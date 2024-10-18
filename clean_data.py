@@ -13,6 +13,10 @@ def random_travel_time():
         end_minute = (start_minute + int((duration % 1) * 60)) % 60
         return f"{start_hour:02}:{start_minute:02}", f"{end_hour:02}:{end_minute:02}"
 
+def check_if_lower_than_24(time):
+     hour, minutes = map(int, time.split(':'))
+     return hour >= 24
+
 if __name__ == "__main__":
     logging.basicConfig(filename='log.txt',filemode='w',level=logging.DEBUG)
     logger = logging.getLogger(__name__)
@@ -47,6 +51,9 @@ if __name__ == "__main__":
     df.loc[df['Czas Początkowy Podróży'].isna(), 'Czas Początkowy Podróży'] = start_time
     filled_rows += df['Czas Końcowy Podróży'].isna().sum()
     df.loc[df['Czas Końcowy Podróży'].isna(), 'Czas Końcowy Podróży'] = end_time
+    filled_rows += df['Czas Początkowy Podróży'].apply(check_if_lower_than_24)
+     start_time, end_time = random_travel_time()
+    df.loc[df['Czas Początkowy Podróży'].apply(check_if_lower_than_24), ['Czas Początkowy Podróży', 'Czas Końcowy Podróży']] = start_time, end_time
     filled_rows += df['Cel Podróży'].isna().sum()
     df.loc[df['Cel Podróży'].isna(), 'Cel Podróży'] = random.choice(travel_goals)
     logger.info('Finished cleaning data')
