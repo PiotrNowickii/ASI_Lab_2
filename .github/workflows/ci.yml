@@ -31,21 +31,17 @@ jobs:
         run: |
           cd Lab2---Obr-bka-danych
           python3 generator_danych.py -s 24667
-          cd -
-      #Krok 5: Uruchom skrypt wysylajacy dane do google spreadsheet
-      - name: Run script which sends data to google spreadsheet
+      #Krok 5: Zapisz klucz do credentials.json
+      - name: Save credentials to json
         env:
           GOOGLE_SHEETS: ${{ secrets.GOOGLE_SHEETS }}
-        run: |
-          echo "$GOOGLE_SHEETS" > credentials.json
-          python export_to_spreadsheet.py
-      #Krok 6: Uruchom skrypt czyszczący dane
+        run: echo "$GOOGLE_SHEETS" > credentials.json  
+      #Krok 6: Uruchom skrypt eksportujący dane do google sheets
+      #- name: Run data exporting script
+      #  run: python3 export_to_spreadsheet.py
+      #Krok 7: Uruchom skrypt czyszczący dane
       - name: Run data-cleaning script
-        env:
-          GOOGLE_SHEETS: ${{ secrets.GOOGLE_SHEETS }}
-        run: |
-          echo "$GOOGLE_SHEETS" > credentials.json
-          python clean_data.py
-      #Krok 7: Wyświetl report.txt
+        run: python3 clean_data.py
+      #Krok 8: Wyświetl report.txt
       - name: Display report.txt
         run: cat report.txt
